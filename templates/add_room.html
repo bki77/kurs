@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Добавление аудитории{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>➕ Добавление аудитории</h2>
+    
+    <form method="POST" action="{{ url_for('add_room') }}">
+        <div class="form-group">
+            <label for="room_number">Номер аудитории:</label>
+            <input type="text" name="room_number" id="room_number" required placeholder="Например: 101">
+        </div>
+        
+        <div class="form-group">
+            <label for="building">Корпус:</label>
+            <input type="text" name="building" id="building" placeholder="Например: Главный">
+        </div>
+        
+        <div class="form-group">
+            <label for="capacity">Вместимость:</label>
+            <input type="number" name="capacity" id="capacity" min="1" placeholder="Например: 30">
+        </div>
+        
+        <div class="form-group">
+            <label for="has_equipment">Оборудование:</label>
+            <input type="text" name="has_equipment" id="has_equipment" placeholder="Например: Проектор, доска">
+        </div>
+        
+        <button type="submit" class="btn btn-success">Добавить аудиторию</button>
+        <a href="{{ url_for('rooms_list') }}" class="btn">Отмена</a>
+    </form>
+</div>
+{% endblock %}

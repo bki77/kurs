@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Добавление занятия{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>➕ Добавление занятия в расписание</h2>
+    
+    <form method="POST" action="{{ url_for('add_schedule') }}">
+        <div class="form-group">
+            <label for="group_id">Группа:</label>
+            <select name="group_id" id="group_id" required>
+                <option value="">Выберите группу</option>
+                {% for group in groups %}
+                    <option value="{{ group.id }}">{{ group.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="discipline_id">Дисциплина:</label>
+            <select name="discipline_id" id="discipline_id" required>
+                <option value="">Выберите дисциплину</option>
+                {% for discipline in disciplines %}
+                    <option value="{{ discipline.id }}">{{ discipline.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="teacher_id">Преподаватель:</label>
+            <select name="teacher_id" id="teacher_id" required>
+                <option value="">Выберите преподавателя</option>
+                {% for teacher in teachers %}
+                    <option value="{{ teacher.id }}">{{ teacher.last_name }} {{ teacher.first_name }} {{ teacher.middle_name or '' }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="room_id">Аудитория:</label>
+            <select name="room_id" id="room_id" required>
+                <option value="">Выберите аудиторию</option>
+                {% for room in rooms %}
+                    <option value="{{ room.id }}">Ауд. {{ room.room_number }} ({{ room.building or 'корпус' }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="day_of_week">День недели:</label>
+            <select name="day_of_week" id="day_of_week" required>
+                <option value="1">Понедельник</option>
+                <option value="2">Вторник</option>
+                <option value="3">Среда</option>
+                <option value="4">Четверг</option>
+                <option value="5">Пятница</option>
+                <option value="6">Суббота</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="lesson_number">Номер пары:</label>
+            <select name="lesson_number" id="lesson_number" required>
+                <option value="1">1 пара (08:30 - 10:05)</option>
+                <option value="2">2 пара (10:15 - 11:50)</option>
+                <option value="3">3 пара (12:00 - 13:35)</option>
+                <option value="4">4 пара (13:50 - 15:25)</option>
+                <option value="5">5 пара (15:40 - 17:15)</option>
+                <option value="6">6 пара (17:25 - 19:00)</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="start_time">Время начала:</label>
+            <input type="time" name="start_time" id="start_time" required value="08:30">
+        </div>
+        
+        <div class="form-group">
+            <label for="end_time">Время окончания:</label>
+            <input type="time" name="end_time" id="end_time" required value="10:05">
+        </div>
+        
+        <div class="form-group">
+            <label for="lesson_type">Тип занятия:</label>
+            <select name="lesson_type" id="lesson_type" required>
+                <option value="лекция">Лекция</option>
+                <option value="практика">Практика</option>
+                <option value="лабораторная">Лабораторная</option>
+                <option value="семинар">Семинар</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="week_type">Тип недели:</label>
+            <select name="week_type" id="week_type" required>
+                <option value="все">Все недели</option>
+                <option value="четная">Четная</option>
+                <option value="нечетная">Нечетная</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-success">Добавить занятие</button>
+        <a href="{{ url_for('schedule') }}" class="btn">Отмена</a>
+    </form>
+</div>
+{% endblock %}

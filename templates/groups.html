@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Группы{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>👥 Список групп</h2>
+    
+    <a href="{{ url_for('add_group') }}" class="btn btn-success">➕ Добавить группу</a>
+    
+    {% if groups %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Название группы</th>
+                    <th>Специальность</th>
+                    <th>Курс</th>
+                    <th>Количество студентов</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for group in groups %}
+                <tr>
+                    <td>{{ group.name }}</td>
+                    <td>{{ group.specialty or '-' }}</td>
+                    <td>{{ group.course or '-' }}</td>
+                    <td>{{ group.students_count or '-' }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('delete_group', id=group.id) }}" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить эту группу?')">Удалить</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty-message">
+            <p>Группы не добавлены. Добавьте первую группу!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

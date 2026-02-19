@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Дисциплины{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>📚 Список дисциплин</h2>
+    
+    <a href="{{ url_for('add_discipline') }}" class="btn btn-success">➕ Добавить дисциплину</a>
+    
+    {% if disciplines %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Название дисциплины</th>
+                    <th>Код</th>
+                    <th>Часы</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for discipline in disciplines %}
+                <tr>
+                    <td>{{ discipline.name }}</td>
+                    <td>{{ discipline.code or '-' }}</td>
+                    <td>{{ discipline.hours or '-' }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('delete_discipline', id=discipline.id) }}" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить эту дисциплину?')">Удалить</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty-message">
+            <p>Дисциплины не добавлены. Добавьте первую дисциплину!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Аудитории{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>🏫 Список аудиторий</h2>
+    
+    <a href="{{ url_for('add_room') }}" class="btn btn-success">➕ Добавить аудиторию</a>
+    
+    {% if rooms %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Номер аудитории</th>
+                    <th>Корпус</th>
+                    <th>Вместимость</th>
+                    <th>Оборудование</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for room in rooms %}
+                <tr>
+                    <td>{{ room.room_number }}</td>
+                    <td>{{ room.building or '-' }}</td>
+                    <td>{{ room.capacity or '-' }}</td>
+                    <td>{{ room.has_equipment or '-' }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('delete_room', id=room.id) }}" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить эту аудиторию?')">Удалить</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty-message">
+            <p>Аудитории не добавлены. Добавьте первую аудиторию!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Расписание занятий{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>📅 Расписание занятий</h2>
+    
+    <form method="get" action="{{ url_for('schedule') }}" class="filter-form">
+        <div class="form-group">
+            <label for="group_id">Фильтр по группе:</label>
+            <select name="group_id" id="group_id">
+                <option value="">Все группы</option>
+                {% for group in groups %}
+                    <option value="{{ group.id }}">{{ group.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn">Фильтровать</button>
+        <a href="{{ url_for('schedule') }}" class="btn">Сбросить</a>
+    </form>
+    
+    <a href="{{ url_for('add_schedule') }}" class="btn btn-success">➕ Добавить занятие</a>
+    
+    {% if schedules %}
+        <table>
+            <thead>
+                <tr>
+                    <th>День недели</th>
+                    <th>Время</th>
+                    <th>Группа</th>
+                    <th>Дисциплина</th>
+                    <th>Тип</th>
+                    <th>Преподаватель</th>
+                    <th>Аудитория</th>
+                    <th>Неделя</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in schedules %}
+                <tr>
+                    <td>
+                        {% if s.day_of_week == 1 %}Понедельник{% elif s.day_of_week == 2 %}Вторник{% elif s.day_of_week == 3 %}Среда{% elif s.day_of_week == 4 %}Четверг{% elif s.day_of_week == 5 %}Пятница{% elif s.day_of_week == 6 %}Суббота{% else %}Воскресенье{% endif %}
+                    </td>
+                    <td>{{ s.start_time }} - {{ s.end_time }}</td>
+                    <td>{{ s.group.name }}</td>
+                    <td>{{ s.discipline.name }}</td>
+                    <td>{{ s.lesson_type }}</td>
+                    <td>{{ s.teacher.last_name }} {{ s.teacher.first_name }}</td>
+                    <td>ауд. {{ s.room.room_number }}</td>
+                    <td>{{ s.week_type }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('delete_schedule', id=s.id) }}" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить это занятие?')">Удалить</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty-message">
+            <p>Расписание пусто. Добавьте первое занятие!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

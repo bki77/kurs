@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Преподаватели{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>👨‍🏫 Список преподавателей</h2>
+    
+    <a href="{{ url_for('add_teacher') }}" class="btn btn-success">➕ Добавить преподавателя</a>
+    
+    {% if teachers %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Должность</th>
+                    <th>Телефон</th>
+                    <th>Email</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher in teachers %}
+                <tr>
+                    <td>{{ teacher.last_name }} {{ teacher.first_name }} {{ teacher.middle_name or '' }}</td>
+                    <td>{{ teacher.position or '-' }}</td>
+                    <td>{{ teacher.phone or '-' }}</td>
+                    <td>{{ teacher.email or '-' }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('delete_teacher', id=teacher.id) }}" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить этого преподавателя?')">Удалить</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty-message">
+            <p>Преподаватели не добавлены. Добавьте первого преподавателя!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
