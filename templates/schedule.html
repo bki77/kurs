@@ -20,7 +20,9 @@
         <a href="{{ url_for('schedule') }}" class="btn">Сбросить</a>
     </form>
     
+    {% if current_user.is_authenticated and current_user.is_admin() %}
     <a href="{{ url_for('add_schedule') }}" class="btn btn-success">➕ Добавить занятие</a>
+    {% endif %}
     
     {% if schedules %}
         <table>
@@ -34,7 +36,9 @@
                     <th>Преподаватель</th>
                     <th>Аудитория</th>
                     <th>Неделя</th>
+                    {% if current_user.is_authenticated and current_user.is_admin() %}
                     <th>Действия</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -50,9 +54,11 @@
                     <td>{{ s.teacher.last_name }} {{ s.teacher.first_name }}</td>
                     <td>ауд. {{ s.room.room_number }}</td>
                     <td>{{ s.week_type }}</td>
+                    {% if current_user.is_authenticated and current_user.is_admin() %}
                     <td class="actions">
                         <a href="{{ url_for('delete_schedule', id=s.id) }}" class="btn btn-danger" onclick="return confirm('Вы уверены, что хотите удалить это занятие?')">Удалить</a>
                     </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>

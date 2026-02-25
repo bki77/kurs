@@ -1,7 +1,46 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
+
+
+class User(db.Model):
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False, verbose_name="Логин")
+    password_hash = db.Column(db.String(200), nullable=False, verbose_name="Хэш пароля")
+    role = db.Column(db.String(20), nullable=False, default='user', verbose_name="Роль (admin/user)")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, verbose_name="Дата создания")
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def is_admin(self):
+        return self.role == 'admin'
+
+    # Для Flask-Login
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return str(self.id)
+
+    def __repr__(self):
+        return f"{self.username} ({self.role})"
 
 
 class Teacher(db.Model):

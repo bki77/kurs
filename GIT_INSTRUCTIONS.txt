@@ -1,0 +1,26 @@
+ИНСТРУКЦИЯ ПО GIT ДЛЯ КУРСОВОЙ
+
+Выполните эти команды по порядку в терминале (командной строке):
+
+---
+
+1. Добавьте все изменения:
+   git add .
+
+2. Создайте коммит:
+   git commit -m "Добавлена система авторизации с ролями admin/user, исправлено время пар в расписании, обновлен README"
+
+3. Отправьте на GitHub:
+   git push origin main
+
+   (Если ветка называется master, используйте: git push origin master)
+
+---
+
+ЕСЛИ ОШИБКИ:
+
+- "refusing to merge unrelated histories":
+  git pull origin main --allow-unrelated-histories
+  затем снова: git push origin main
+
+- Если просит логин/пароль - введите свои данные от GitHub

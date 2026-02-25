@@ -61,24 +61,24 @@
         
         <div class="form-group">
             <label for="lesson_number">Номер пары:</label>
-            <select name="lesson_number" id="lesson_number" required>
-                <option value="1">1 пара (08:30 - 10:05)</option>
-                <option value="2">2 пара (10:15 - 11:50)</option>
-                <option value="3">3 пара (12:00 - 13:35)</option>
-                <option value="4">4 пара (13:50 - 15:25)</option>
-                <option value="5">5 пара (15:40 - 17:15)</option>
-                <option value="6">6 пара (17:25 - 19:00)</option>
+            <select name="lesson_number" id="lesson_number" required onchange="updateTime()">
+                <option value="1" data-start="08:00" data-end="09:30">1 пара (08:00-09:30)</option>
+                <option value="2" data-start="09:40" data-end="11:10">2 пара (09:40-11:10)</option>
+                <option value="3" data-start="11:40" data-end="13:10">3 пара (11:40-13:10)</option>
+                <option value="4" data-start="13:30" data-end="15:00">4 пара (13:30-15:00)</option>
+                <option value="5" data-start="15:10" data-end="16:40">5 пара (15:10-16:40)</option>
+                <option value="6" data-start="16:50" data-end="18:20">6 пара (16:50-18:20)</option>
             </select>
         </div>
         
         <div class="form-group">
             <label for="start_time">Время начала:</label>
-            <input type="time" name="start_time" id="start_time" required value="08:30">
+            <input type="time" name="start_time" id="start_time" required value="08:00">
         </div>
         
         <div class="form-group">
             <label for="end_time">Время окончания:</label>
-            <input type="time" name="end_time" id="end_time" required value="10:05">
+            <input type="time" name="end_time" id="end_time" required value="09:30">
         </div>
         
         <div class="form-group">
@@ -104,4 +104,16 @@
         <a href="{{ url_for('schedule') }}" class="btn">Отмена</a>
     </form>
 </div>
+
+<script>
+function updateTime() {
+    var select = document.getElementById('lesson_number');
+    var option = select.options[select.selectedIndex];
+    var startTime = option.getAttribute('data-start');
+    var endTime = option.getAttribute('data-end');
+    
+    document.getElementById('start_time').value = startTime;
+    document.getElementById('end_time').value = endTime;
+}
+</script>
 {% endblock %}

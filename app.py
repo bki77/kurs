@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from sqlalchemy import or_
 from config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS, SECRET_KEY
-from models import db, Teacher, Room, Discipline, Group, Schedule
+from models import db, Teacher, Room, Discipline, Group, Schedule, User
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from functools import wraps
 
 app = Flask(__name__)
 
@@ -11,8 +13,54 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
 
 db.init_app(app)
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin():
+            flash('У вас нет доступа к этой странице!', 'error')
+            return redirect(url_for('schedule'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @app.route('/')
 def index():
+    return redirect(url_for('schedule'))
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        user = User.query.filter_by(username=username).first()
+        
+        if user and user.check_password(password):
+            login_user(user)
+            flash('Вы успешно вошли в систему!', 'success')
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('schedule'))
+        else:
+            flash('Неверный логин или пароль!', 'error')
+    
+    return render_template('login.html')
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Вы вышли из системы!', 'success')
     return redirect(url_for('schedule'))
 
 
@@ -32,6 +80,7 @@ def schedule():
 
 
 @app.route('/schedule/add', methods=['GET', 'POST'])
+@login_required
 def add_schedule():
     if request.method == 'POST':
         group_id = int(request.form.get('group_id'))
@@ -99,6 +148,7 @@ def add_schedule():
 
 
 @app.route('/schedule/delete/<int:id>')
+@login_required
 def delete_schedule(id):
     schedule = Schedule.query.get_or_404(id)
     db.session.delete(schedule)
@@ -108,12 +158,14 @@ def delete_schedule(id):
 
 
 @app.route('/teachers')
+@login_required
 def teachers_list():
     teachers = Teacher.query.all()
     return render_template('teachers.html', teachers=teachers)
 
 
 @app.route('/teachers/add', methods=['GET', 'POST'])
+@login_required
 def add_teacher():
     if request.method == 'POST':
         teacher = Teacher(
@@ -132,6 +184,7 @@ def add_teacher():
 
 
 @app.route('/teachers/delete/<int:id>')
+@login_required
 def delete_teacher(id):
     teacher = Teacher.query.get_or_404(id)
     db.session.delete(teacher)
@@ -141,12 +194,14 @@ def delete_teacher(id):
 
 
 @app.route('/rooms')
+@login_required
 def rooms_list():
     rooms = Room.query.all()
     return render_template('rooms.html', rooms=rooms)
 
 
 @app.route('/rooms/add', methods=['GET', 'POST'])
+@login_required
 def add_room():
     if request.method == 'POST':
         room = Room(
@@ -163,6 +218,7 @@ def add_room():
 
 
 @app.route('/rooms/delete/<int:id>')
+@login_required
 def delete_room(id):
     room = Room.query.get_or_404(id)
     db.session.delete(room)
@@ -172,12 +228,14 @@ def delete_room(id):
 
 
 @app.route('/disciplines')
+@login_required
 def disciplines_list():
     disciplines = Discipline.query.all()
     return render_template('disciplines.html', disciplines=disciplines)
 
 
 @app.route('/disciplines/add', methods=['GET', 'POST'])
+@login_required
 def add_discipline():
     if request.method == 'POST':
         discipline = Discipline(
@@ -193,6 +251,7 @@ def add_discipline():
 
 
 @app.route('/disciplines/delete/<int:id>')
+@login_required
 def delete_discipline(id):
     discipline = Discipline.query.get_or_404(id)
     db.session.delete(discipline)
@@ -202,12 +261,14 @@ def delete_discipline(id):
 
 
 @app.route('/groups')
+@login_required
 def groups_list():
     groups = Group.query.all()
     return render_template('groups.html', groups=groups)
 
 
 @app.route('/groups/add', methods=['GET', 'POST'])
+@login_required
 def add_group():
     if request.method == 'POST':
         group = Group(
@@ -224,6 +285,7 @@ def add_group():
 
 
 @app.route('/groups/delete/<int:id>')
+@login_required
 def delete_group(id):
     group = Group.query.get_or_404(id)
     db.session.delete(group)
@@ -235,7 +297,21 @@ def delete_group(id):
 @app.route('/init-db')
 def init_database():
     db.create_all()
-    flash('База данных инициализирована!', 'success')
+    
+    admin = User.query.filter_by(username='admin').first()
+    if not admin:
+        admin = User(username='admin', role='admin')
+        admin.set_password('admin123')
+        db.session.add(admin)
+    
+    user = User.query.filter_by(username='user').first()
+    if not user:
+        user = User(username='user', role='user')
+        user.set_password('user123')
+        db.session.add(user)
+    
+    db.session.commit()
+    flash('База данных инициализирована! Созданы пользователи: admin (пароль: admin123) и user (пароль: user123)', 'success')
     return redirect(url_for('index'))
 
 

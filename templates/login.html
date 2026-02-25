@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Вход в систему{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 400px; margin: 0 auto;">
+    <h2>🔐 Вход в систему</h2>
+    
+    <form method="post" action="{{ url_for('login') }}">
+        <div class="form-group">
+            <label for="username">Логин:</label>
+            <input type="text" name="username" id="username" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password" name="password" id="password" required>
+        </div>
+        
+        <button type="submit" class="btn" style="width: 100%;">Войти</button>
+    </form>
+    
+</div>
+{% endblock %}
